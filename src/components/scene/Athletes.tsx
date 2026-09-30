@@ -33,7 +33,7 @@ export const Athletes = forwardRef<AthletesHandle, { race: Race }>(function Athl
         figures.current[i]?.update(athlete, ctx);
         const label = labels.current[i];
         if (!label) return;
-        label.position.set(athlete.position[0], 0, athlete.position[2]);
+        label.position.set(athlete.position[0], 0.04, athlete.position[2]);
         label.rotation.y = pool ? 0 : athlete.heading - Math.PI / 2;
         label.visible = labelVisible(athlete, pool);
       });

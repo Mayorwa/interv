@@ -21,7 +21,7 @@ export function namePlate(name: string, country: string): { texture: THREE.Textu
   const gap = 10 * scale;
 
   const measure = document.createElement("canvas").getContext("2d")!;
-  measure.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+  measure.font = `700 ${fontSize}px IBM Plex Sans, system-ui, sans-serif`;
   const textW = measure.measureText(last).width;
 
   const canvas = document.createElement("canvas");
@@ -29,7 +29,7 @@ export function namePlate(name: string, country: string): { texture: THREE.Textu
   canvas.height = Math.ceil(Math.max(fontSize, flagH) + padding * 2);
   const ctx = canvas.getContext("2d")!;
 
-  ctx.font = `700 ${fontSize}px Inter, system-ui, sans-serif`;
+  ctx.font = `700 ${fontSize}px IBM Plex Sans, system-ui, sans-serif`;
   ctx.textBaseline = "middle";
   ctx.textAlign = "left";
   ctx.fillStyle = "#1c2030";
@@ -66,14 +66,14 @@ export function textPlate(
   const fontSize = (options.size ?? 32) * scale;
   const padding = 4 * scale;
   const measure = document.createElement("canvas").getContext("2d")!;
-  measure.font = `${options.weight ?? 700} ${fontSize}px Inter, system-ui, sans-serif`;
+  measure.font = `${options.weight ?? 700} ${fontSize}px IBM Plex Sans, system-ui, sans-serif`;
   const width = measure.measureText(text).width;
 
   const canvas = document.createElement("canvas");
   canvas.width = Math.ceil(width + padding * 2);
   canvas.height = Math.ceil(fontSize * 1.3);
   const ctx = canvas.getContext("2d")!;
-  ctx.font = `${options.weight ?? 700} ${fontSize}px Inter, system-ui, sans-serif`;
+  ctx.font = `${options.weight ?? 700} ${fontSize}px IBM Plex Sans, system-ui, sans-serif`;
   ctx.textBaseline = "middle";
   ctx.fillStyle = options.color ?? "#ffffff";
   ctx.fillText(text, padding, canvas.height / 2);

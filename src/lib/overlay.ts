@@ -8,7 +8,7 @@ import type { RaceState } from "./types";
  * same code, and the type is real text rather than a texture.
  */
 
-const INK = "#11131c";
+const INK = "#000000";
 const MUTED = "#8b90a3";
 const RULE = "rgba(17,19,28,0.12)";
 const MEDALS = ["#c8a227", "#9aa0ad", "#a9713c"];
@@ -40,18 +40,18 @@ export function drawOverlay(
   const left = 52 * s;
 
   ctx.fillStyle = MUTED;
-  ctx.font = `700 ${26 * s}px Inter, system-ui, sans-serif`;
+  ctx.font = `700 ${26 * s}px IBM Plex Sans, system-ui, sans-serif`;
   ctx.letterSpacing = `${1.6 * s}px`;
   ctx.fillText(race.round, left, 76 * s);
 
   ctx.fillStyle = INK;
-  ctx.font = `700 ${52 * s}px Inter, system-ui, sans-serif`;
+  ctx.font = `700 ${52 * s}px IBM Plex Sans, system-ui, sans-serif`;
   ctx.letterSpacing = `${-0.6 * s}px`;
   ctx.fillText(race.event, left, 133 * s);
 
   ctx.textAlign = "right";
   ctx.fillStyle = MUTED;
-  ctx.font = `700 ${40 * s}px Inter, system-ui, sans-serif`;
+  ctx.font = `700 ${40 * s}px IBM Plex Sans, system-ui, sans-serif`;
   ctx.letterSpacing = `${-0.4 * s}px`;
   ctx.fillText(race.meet, size - left, 78 * s);
   ctx.textAlign = "left";
@@ -63,7 +63,7 @@ export function drawOverlay(
     ctx.save();
     ctx.globalAlpha = state.section.alpha;
     ctx.fillStyle = INK;
-    ctx.font = `700 ${25 * s}px Inter, system-ui, sans-serif`;
+    ctx.font = `700 ${25 * s}px IBM Plex Sans, system-ui, sans-serif`;
     ctx.letterSpacing = `${2.4 * s}px`;
     const label = state.section.label;
     const width = ctx.measureText(label).width;
@@ -75,7 +75,7 @@ export function drawOverlay(
   }
 
   ctx.fillStyle = MUTED;
-  ctx.font = `500 ${21 * s}px Inter, system-ui, sans-serif`;
+  ctx.font = `500 ${21 * s}px IBM Plex Sans, system-ui, sans-serif`;
   ctx.textAlign = "right";
   ctx.fillText(options.credit, size - left, size - 46 * s);
   ctx.textAlign = "left";
@@ -94,10 +94,10 @@ function drawClock(
   const shown = Math.max(0, state.raceClock);
   const text = formatClock(shown, longForm);
 
-  ctx.font = `700 ${34 * s}px Inter, system-ui, sans-serif`;
+  ctx.font = `700 ${34 * s}px IBM Plex Sans, system-ui, sans-serif`;
   const width = ctx.measureText(text).width;
   const boxW = width + 36 * s;
-  const boxH = 54 * s;
+  const boxH = 50 * s;
   const y = 166 * s;
 
   ctx.strokeStyle = INK;
@@ -137,7 +137,7 @@ function drawResults(
   ctx.strokeRect(left, top, cardW, cardH);
 
   ctx.fillStyle = MUTED;
-  ctx.font = `700 ${19 * s}px Inter, system-ui, sans-serif`;
+  ctx.font = `700 ${19 * s}px IBM Plex Sans, system-ui, sans-serif`;
   ctx.letterSpacing = `${1.4 * s}px`;
   ctx.fillText("RESULT", left + padding, top + padding + 16 * s);
   ctx.letterSpacing = "0px";
@@ -153,21 +153,21 @@ function drawResults(
       ctx.stroke();
     }
 
-    ctx.fillStyle = i < 3 ? MEDALS[i] : MUTED;
-    ctx.font = `700 ${24 * s}px Inter, system-ui, sans-serif`;
+    ctx.fillStyle = i < 3 ? MEDALS[i] : INK;
+    ctx.font = `600 ${18 * s}px IBM Plex Sans, system-ui, sans-serif`;
     ctx.fillText(String(i + 1), left + padding, y);
 
     ctx.fillStyle = INK;
-    ctx.font = `700 ${26 * s}px Inter, system-ui, sans-serif`;
+    ctx.font = `500 ${20 * s}px IBM Plex Sans, system-ui, sans-serif`;
     ctx.fillText(athlete.athlete.name, left + padding + 40 * s, y);
 
     ctx.fillStyle = MUTED;
-    ctx.font = `500 ${22 * s}px Inter, system-ui, sans-serif`;
-    ctx.fillText(athlete.athlete.country, left + padding + 400 * s, y);
+    ctx.font = `500 ${18 * s}px IBM Plex Sans, system-ui, sans-serif`;
+    ctx.fillText(athlete.athlete.country, left + padding + 300 * s, y);
 
     ctx.textAlign = "right";
     ctx.fillStyle = INK;
-    ctx.font = `700 ${25 * s}px Inter, system-ui, sans-serif`;
+    ctx.font = `700 ${18 * s}px IBM Plex Sans, system-ui, sans-serif`;
     ctx.fillText(
       formatResult(athlete.finishTime, compiled.race.distance >= 800),
       left + cardW - padding,
@@ -176,7 +176,7 @@ function drawResults(
 
     if (i > 0) {
       ctx.fillStyle = MUTED;
-      ctx.font = `500 ${20 * s}px Inter, system-ui, sans-serif`;
+      ctx.font = `500 ${18 * s}px IBM Plex Sans, system-ui, sans-serif`;
       ctx.fillText(formatGap(athlete.gap), left + cardW - padding - 128 * s, y);
     }
     ctx.textAlign = "left";

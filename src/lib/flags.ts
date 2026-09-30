@@ -285,7 +285,7 @@ export function flagCanvas(country: string): HTMLCanvasElement {
     ctx.fillStyle = "#cbd5e1";
     ctx.fillRect(0, 0, FLAG_W, FLAG_H);
     ctx.fillStyle = "#0f172a";
-    ctx.font = "bold 30px Inter, system-ui, sans-serif";
+    ctx.font = "bold 30px IBM Plex Sans, system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(country.slice(0, 3), FLAG_W / 2, FLAG_H / 2 + 2);

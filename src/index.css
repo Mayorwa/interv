@@ -1,26 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-/* Bundled rather than fetched: the overlay is drawn into a canvas, and canvas text
-   silently falls back to a default face if the font is not already loaded. */
-@font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-Medium.ttf") format("truetype");
-    font-weight: 500;
-    font-display: block;
-}
-@font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter-Bold.ttf") format("truetype");
-    font-weight: 700;
-    font-display: block;
-}
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
     --font-heading: var(--font-sans);
-    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
