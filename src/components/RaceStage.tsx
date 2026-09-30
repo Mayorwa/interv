@@ -1,9 +1,12 @@
+import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Athletes, type AthletesHandle } from "@/components/scene/Athletes";
 import { PoolScene } from "@/components/scene/PoolScene";
 import { TrackScene } from "@/components/scene/TrackScene";
+import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/Icon";
 import { damp, shotFor } from "@/lib/camera";
 import { drawOverlay, type OverlayOptions } from "@/lib/overlay";
 import type { Playhead } from "@/lib/playhead";
@@ -30,9 +33,13 @@ interface Props {
 export function RaceStage({ compiled, playhead, overlay, handles, onState }: Props) {
   const overlayCanvas = useRef<HTMLCanvasElement>(null);
   const wrapper = useRef<HTMLDivElement>(null);
+  const cameraResetToken = useRef(0);
 
   return (
-    <div ref={wrapper} className="relative aspect-square w-full overflow-hidden bg-white">
+    <div
+      ref={wrapper}
+      className="relative aspect-square w-full cursor-grab overflow-hidden bg-white active:cursor-grabbing"
+    >
       <Canvas
         dpr={[1, 2]}
         gl={{ antialias: true, preserveDrawingBuffer: true }}
@@ -48,6 +55,7 @@ export function RaceStage({ compiled, playhead, overlay, handles, onState }: Pro
           overlayCanvas={overlayCanvas}
           handles={handles}
           onState={onState}
+          cameraResetToken={cameraResetToken}
         />
       </Canvas>
       <canvas
@@ -55,6 +63,20 @@ export function RaceStage({ compiled, playhead, overlay, handles, onState }: Pro
         className="pointer-events-none absolute inset-0 h-full w-full"
         aria-hidden
       />
+      <div className="absolute right-3 top-3 z-10">
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="cursor-pointer bg-white/90 shadow-sm"
+          onClick={() => {
+            cameraResetToken.current += 1;
+          }}
+        >
+          <Icon name="camera" />
+          Reset view
+        </Button>
+      </div>
     </div>
   );
 }
@@ -66,7 +88,11 @@ function SceneContents({
   overlayCanvas,
   handles,
   onState,
-}: Props & { overlayCanvas: React.RefObject<HTMLCanvasElement | null> }) {
+  cameraResetToken,
+}: Props & {
+  overlayCanvas: React.RefObject<HTMLCanvasElement | null>;
+  cameraResetToken: React.RefObject<number>;
+}) {
   const { race } = compiled;
   const athletes = useRef<AthletesHandle>(null);
   const { gl, camera, scene, advance, size } = useThree();
@@ -77,9 +103,13 @@ function SceneContents({
   );
 
   const target = useRef(new THREE.Vector3());
+  const lastTarget = useRef(new THREE.Vector3());
   const lastSeek = useRef(-1);
+  const lastCamReset = useRef(0);
   const lastReport = useRef(0);
   const lastVideoTime = useRef(0);
+  const controls = useRef<React.ComponentRef<typeof OrbitControls>>(null);
+  const userLook = useRef(false);
 
   // The overlay is drawn at the canvas's own pixel size so the two layers line up.
   useEffect(() => {
@@ -92,7 +122,7 @@ function SceneContents({
 
   // Camera smoothing steps in video time, not wall time, so a half-speed preview
   // and an export produce exactly the same camera move.
-  const applyFrame = (videoTime: number) => {
+  const applyFrame = (videoTime: number, cinematic = false) => {
     const dt = Math.max(0, Math.min(0.25, videoTime - lastVideoTime.current));
     lastVideoTime.current = videoTime;
     const raceClock = videoTimeToRaceClock(compiled, videoTime);
@@ -107,17 +137,41 @@ function SceneContents({
     const shot = shotFor(race, state, laneCount);
     const snap = playhead.seekToken !== lastSeek.current;
     lastSeek.current = playhead.seekToken;
-    if (snap) {
-      camera.position.copy(shot.position);
-      target.current.copy(shot.target);
+    const resetCam = cameraResetToken.current !== lastCamReset.current;
+    lastCamReset.current = cameraResetToken.current;
+    if (snap || resetCam) userLook.current = false;
+
+    const hardSnap = snap || resetCam;
+    const followScript = cinematic || hardSnap || !userLook.current;
+    if (followScript) {
+      if (hardSnap) {
+        camera.position.copy(shot.position);
+        target.current.copy(shot.target);
+      } else {
+        damp(camera.position, shot.position, 6, dt);
+        damp(target.current, shot.target, 6, dt);
+      }
+      camera.lookAt(target.current);
+      controls.current?.target.copy(target.current);
     } else {
-      damp(camera.position, shot.position, 6, dt);
+      const previous = lastTarget.current;
       damp(target.current, shot.target, 6, dt);
+      camera.position.x += target.current.x - previous.x;
+      camera.position.y += target.current.y - previous.y;
+      camera.position.z += target.current.z - previous.z;
+      controls.current?.target.copy(target.current);
+      camera.lookAt(target.current);
     }
-    camera.lookAt(target.current);
-    if (camera instanceof THREE.PerspectiveCamera && camera.fov !== shot.fov) {
-      camera.fov += (shot.fov - camera.fov) * Math.min(1, dt * 5);
-      camera.updateProjectionMatrix();
+    lastTarget.current.copy(target.current);
+
+    if (camera instanceof THREE.PerspectiveCamera) {
+      if (hardSnap && camera.fov !== shot.fov) {
+        camera.fov = shot.fov;
+        camera.updateProjectionMatrix();
+      } else if (followScript && camera.fov !== shot.fov) {
+        camera.fov += (shot.fov - camera.fov) * Math.min(1, dt * 5);
+        camera.updateProjectionMatrix();
+      }
     }
 
     return state;
@@ -160,7 +214,7 @@ function SceneContents({
     // One frame, start to finish: place everyone, render, then composite the
     // titles on top. Synchronous, so nothing can interleave before it is captured.
     handles.current.renderFrame = (videoTime, frameSize, exportCtx) => {
-      const state = applyFrame(videoTime);
+      const state = applyFrame(videoTime, true);
       gl.render(scene, camera);
       if (!exportCtx) return;
       exportCtx.drawImage(gl.domElement, 0, 0, frameSize, frameSize);
@@ -186,6 +240,18 @@ function SceneContents({
         <PoolScene length={race.poolLength ?? 50} />
       )}
       <Athletes ref={athletes} race={race} />
+      <OrbitControls
+        ref={controls}
+        makeDefault
+        enableDamping={false}
+        minDistance={8}
+        maxDistance={220}
+        minPolarAngle={0.12}
+        maxPolarAngle={Math.PI / 2 - 0.06}
+        onStart={() => {
+          userLook.current = true;
+        }}
+      />
     </>
   );
 }

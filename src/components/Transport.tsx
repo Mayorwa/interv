@@ -1,6 +1,6 @@
-import { Pause, Play, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/Icon";
 import { Slider } from "@/components/ui/slider";
 import { formatClock } from "@/lib/format";
 import type { Playhead } from "@/lib/playhead";
@@ -58,7 +58,7 @@ export function Transport({
           disabled={disabled}
           aria-label={playing ? "Pause" : "Play"}
         >
-          {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
+          {playing ? <Icon name="pause" /> : <Icon name="play" />}
         </Button>
         <Button
           size="icon"
@@ -67,7 +67,7 @@ export function Transport({
           disabled={disabled}
           aria-label="Back to the start"
         >
-          <RotateCcw className="size-4" />
+          <Icon name="reset" />
         </Button>
 
         <Slider

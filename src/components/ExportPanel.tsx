@@ -1,6 +1,6 @@
-import { Download, Image as ImageIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/Icon";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -139,11 +139,11 @@ export function ExportPanel({ compiled, handles, playhead, onBusyChange }: Props
 
       <div className="flex flex-col gap-2">
         <Button onClick={run} disabled={busy} className="gap-2">
-          {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
+          {busy ? <Icon name="renew" className="animate-spin" /> : <Icon name="download" />}
           {busy ? `Writing frames… ${Math.round((progress ?? 0) * 100)}%` : "Export the clip"}
         </Button>
         <Button variant="outline" onClick={grabStill} disabled={busy} className="gap-2">
-          <ImageIcon className="size-4" />
+          <Icon name="image" />
           Save this frame as PNG
         </Button>
       </div>

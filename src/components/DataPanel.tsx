@@ -1,6 +1,6 @@
-import { Check, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/Icon";
 import { Textarea } from "@/components/ui/textarea";
 import type { Race } from "@/lib/types";
 
@@ -60,7 +60,7 @@ export function DataPanel({ race, original, onChange }: Props) {
       {error && <p className="text-xs text-destructive">{error}</p>}
       <div className="flex items-center gap-2">
         <Button size="sm" onClick={apply} className="gap-1.5">
-          {applied ? <Check className="size-3.5" /> : null}
+          {applied ? <Icon name="checkmark" width="14px" height="14px" /> : null}
           {applied ? "Applied" : "Apply"}
         </Button>
         <Button
@@ -69,7 +69,7 @@ export function DataPanel({ race, original, onChange }: Props) {
           className="gap-1.5"
           onClick={() => onChange(original)}
         >
-          <RotateCcw className="size-3.5" />
+          <Icon name="reset" width="14px" height="14px" />
           Revert
         </Button>
       </div>

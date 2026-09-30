@@ -1,6 +1,6 @@
-import { Plus, RotateCcw, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import Icon from "@/components/ui/Icon";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { buildCurve } from "@/lib/curve";
@@ -93,7 +93,7 @@ export function NudgePanel({ race, athlete, onChange }: Props) {
         </div>
         {athlete.nudges?.length ? (
           <Button size="sm" variant="ghost" className="h-7 gap-1 px-2 text-xs" onClick={() => setNudges([])}>
-            <RotateCcw className="size-3" />
+            <Icon name="reset" width="12px" height="12px" />
             Reset
           </Button>
         ) : null}
@@ -133,7 +133,7 @@ export function NudgePanel({ race, athlete, onChange }: Props) {
                     onClick={() => removeMark(mark.meters)}
                     aria-label={`Remove the mark at ${mark.meters} metres`}
                   >
-                    <X className="size-3" />
+                    <Icon name="close" width="12px" height="12px" />
                   </Button>
                 )}
               </div>
@@ -166,7 +166,7 @@ export function NudgePanel({ race, athlete, onChange }: Props) {
           />
         </div>
         <Button size="sm" variant="outline" className="h-8 gap-1" onClick={addMark}>
-          <Plus className="size-3.5" />
+          <Icon name="add" width="14px" height="14px" />
           Add
         </Button>
       </div>
